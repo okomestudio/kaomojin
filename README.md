@@ -1,3 +1,3 @@
-# python-project
+# Kaomojin
 
-Project template for Python
+A kaomoji extractor for Python.

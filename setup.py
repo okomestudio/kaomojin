@@ -7,7 +7,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-def meta(category, fpath="src/package/__init__.py"):
+def meta(category, fpath="src/kaomojin/__init__.py"):
     here = os.path.abspath(os.path.dirname(__file__))
     with codecs.open(os.path.join(here, fpath), "r") as f:
         package_root_file = f.read()
@@ -26,11 +26,11 @@ setup_requires = ["pre-commit"]
 test_requires = ["pytest"]
 
 setup(
-    name="python-project",
+    name="kaomojin",
     version=meta("version"),
-    description="Project description",
+    description="A kaomoji extractor for Python",
     author=meta("author"),
-    url="https://github.com/okomestudio/python-project",
+    url="https://github.com/okomestudio/kaomojin",
     platforms=["Linux"],
     classifiers=[],
     package_dir={"": "src"},
