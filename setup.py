@@ -35,6 +35,8 @@ setup(
     classifiers=[],
     package_dir={"": "src"},
     packages=find_packages("src"),
+    include_package_data=True,
+    package_data={"kaomojin.data": ["kaomoji/*.tsv"]},
     python_requires=">=3.7",
     scripts=[],
     install_requires=requires,
