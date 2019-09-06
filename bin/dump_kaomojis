@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+import json
+from argparse import ArgumentParser
+from html import unescape
+
+import emoji
+import regex as re
+
+
+def get_twitter_statuses(filename):
+    with open(filename) as f:
+        for line in f:
+            status = json.loads(line)
+            yield status["full_text"]
+
+
+def remove_emojis(text):
+    text = emoji.demojize(text)
+    text = re.sub(r":\w+:", "", text)
+    return text
+
+
+def remove_twitter_junks(text):
+    # Remove @username
+    text = re.sub(r"\.?@[a-zA-Z0-9_]+", "", text)
+
+    # Remove tag
+    text = re.sub(r"#(\w)+", r"\1", text)
+
+    # Remove URL
+    text = re.sub(r"https?://[\w./]+", r"", text)
+
+    return text
+
+
+def remove_japanese(text):
+    # (r"\p{Emoji=Yes}+", font_emoji),
+    # (r"\p{Emoji_Presentation=Yes}+", font_emoji),
+    # (r"\p{Han}+", font_cjk),
+    # (r"\p{Katakana}+", font_cjk),
+    # (r"\p{Hiragana}+", font_cjk),
+
+    # text = re.sub(r"\p{Hiragana}", "あ", text)
+    # text = re.sub(r"\p{Katakana}(?<![ｱ-ﾝ])", "ア", text)
+    # text = re.sub(r"\p{Han}", "漢", text)
+
+    text = re.sub(
+        r"(([！]{0,})([\p{Hiragana}\p{Katakana}\p{Han}a-zA-Z0-9.,&＆０-９ー、](?<![ｧ-ﾝ])){2,}([…。！？]{0,}))",
+        "\n",
+        text,
+    )
+    return text
+
+
+def main(filenames):
+    for filename in filenames:
+        process(filename)
+
+
+def process(filename):
+    for idx, text in enumerate(get_twitter_statuses(filename)):
+        new = text
+
+        new = remove_emojis(new)
+        new = unescape(new)
+
+        new = new.replace("\u200b", "")
+        new = remove_twitter_junks(new)
+        new = remove_japanese(new)
+
+        print(idx, text)
+        print(idx, [s for s in new.split("\n") if s.strip() != ""])
+        print()
+
+
+if __name__ == "__main__":
+    p = ArgumentParser()
+    p.add_argument("filename")
+    args = p.parse_args()
+    main(args.filename)
