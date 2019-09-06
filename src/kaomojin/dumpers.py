@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import sys
 from argparse import ArgumentParser
 from html import unescape
@@ -6,6 +5,8 @@ from html import unescape
 import emoji
 import regex as re
 from termcolor import colored
+
+from .kaomojin import extract_and_replace
 
 
 _valid_emojis = set(emoji.EMOJI_UNICODE.keys())
@@ -49,6 +50,8 @@ class tweet(Format):
     def __call__(self, text):
         text = unescape(text)
 
+        kaomojis, text = extract_and_replace(text, "")
+
         # Remove @username
         text = re.sub(r"\.?@[a-zA-Z0-9_]+[:;]?", "", text)
 
@@ -63,7 +66,9 @@ class tweet(Format):
         text = remove_emojis(text)
         text = text.replace("\u200b", "")
         text = remove_japanese(text)
-        return [s.strip() for s in text.split("\n") if s.strip() != ""]
+        return [(0, obj.text) for obj in kaomojis] + [
+            (1, s.strip()) for s in text.split("\n") if s.strip() != ""
+        ]
 
 
 class default(Format):
@@ -93,7 +98,7 @@ def main(filenames, format=None, show_source=False):
         if show_source:
             lines.append(colored(text, "blue"))
         for each in result:
-            lines.append('"' + each + '"')
+            lines.append("%d\t%s" % each)
 
         if lines:
             for line in lines:
@@ -101,7 +106,7 @@ def main(filenames, format=None, show_source=False):
             print()
 
 
-if __name__ == "__main__":
+def cli():
     p = ArgumentParser()
     p.add_argument("filename", nargs="*")
     p.add_argument("--format", "-f", choices=("tweet",), default=None)

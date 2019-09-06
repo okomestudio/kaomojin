@@ -19,7 +19,7 @@ def meta(category, fpath="src/kaomojin/__init__.py"):
     raise Exception("Meta info string for {} undefined".format(category))
 
 
-requires = []
+requires = ["emoji", "regex", "termcolor"]
 
 setup_requires = ["pre-commit"]
 
@@ -43,5 +43,5 @@ setup(
     setup_requires=setup_requires,
     tests_require=test_requires,
     extras_require={"test": test_requires},
-    entry_points={"console_scripts": []},
+    entry_points={"console_scripts": ["kaodump=kaomojin.dumpers:cli"]},
 )
