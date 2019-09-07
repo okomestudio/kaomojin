@@ -48,6 +48,7 @@ class Format:
 
 class tweet(Format):
     def __call__(self, text):
+        text = text.replace("\u200b", "")
         text = unescape(text)
 
         kaomojis, text = extract_and_replace(text, "")
