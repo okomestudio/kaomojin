@@ -80,31 +80,49 @@ class default(Format):
         return [s.strip() for s in text.split("\n") if s.strip() != ""]
 
 
-def main(filenames, format=None, show_source=False):
+def main(
+    filenames,
+    format=None,
+    show_source=False,
+    color=False,
+    only_new=False,
+    no_flag=False,
+):
     format = Format.factory(format)
 
     def gen_texts(filenames):
         if not filenames:
             for text in sys.stdin:
-                yield text
+                yield text.rstrip("\n")
         else:
             for filename in filenames:
                 with open(filename) as f:
                     for text in f:
-                        yield text
+                        yield text.rstrip("\n")
 
     for idx, text in enumerate(gen_texts(filenames)):
         result = format(text)
+        new_exists = any(flag > 0 for flag, _ in result)
+
         lines = []
-        if show_source:
-            lines.append(colored(text, "blue"))
-        for each in result:
-            lines.append("%d\t%s" % each)
+
+        if (not only_new or (only_new and new_exists)) and show_source:
+            if color:
+                lines.append("# " + colored(text, "blue"))
+            else:
+                lines.append("# " + text)
+
+        for flag, kao in result:
+            if only_new and flag == 0:
+                continue
+            if no_flag:
+                lines.append(kao)
+            else:
+                lines.append("%d\t%s" % (flag, kao))
 
         if lines:
             for line in lines:
                 print(line)
-            print()
 
 
 def cli():
@@ -112,5 +130,15 @@ def cli():
     p.add_argument("filename", nargs="*")
     p.add_argument("--format", "-f", choices=("tweet",), default=None)
     p.add_argument("--show-source", "-s", action="store_true", default=False)
+    p.add_argument("--color", action="store_true", default=False)
+    p.add_argument("--only-new", action="store_true", default=False)
+    p.add_argument("--no-flag", action="store_true", default=False)
     args = p.parse_args()
-    main(args.filename, format=args.format, show_source=args.show_source)
+    main(
+        args.filename,
+        format=args.format,
+        show_source=args.show_source,
+        color=args.color,
+        only_new=args.only_new,
+        no_flag=args.no_flag,
+    )
