@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# Remove invalid (unicode) character, sort, and uniquify kaomoji list elements.
+
+cat "$@" | sed "s/$(echo -ne '\u200b')//g" | sort | uniq
