@@ -20,3 +20,21 @@ exclude = '''
   | dist
 )/
 '''
+
+
+[tool.coverage.report]
+exclude_lines = [
+    "def __repr__",
+    "def __str__",
+    "except ImportError",
+    "if __name__ == .__main__.:",
+    "log(|ging).(debug|info|warning)",
+    "pragma: no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+
+[tool.isort]
+line_length = 88
+force_single_line = true

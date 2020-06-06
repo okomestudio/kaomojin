@@ -1,3 +1,5 @@
-# Kaomojin
+***********
+Kaomojin
+***********
 
 A kaomoji extractor for Python.

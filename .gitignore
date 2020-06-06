@@ -105,4 +105,3 @@ venv.bak/
 
 # Misc.
 .dir-locals.el
-.flake8
