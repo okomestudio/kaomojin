@@ -31,7 +31,7 @@ version = meta("version")
 readme = fread("README.rst")
 
 
-requires = ["emoji", "regex", "termcolor"]
+requires = ["emoji==0.5.4", "regex==2020.5.14", "termcolor==1.1.0"]
 
 setup_requires = ["pytest-runner>=5.2"]
 

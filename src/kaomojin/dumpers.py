@@ -8,7 +8,6 @@ from termcolor import colored
 
 from .kaomojin import extract_and_replace
 
-
 _valid_emojis = set(emoji.EMOJI_UNICODE.keys())
 
 

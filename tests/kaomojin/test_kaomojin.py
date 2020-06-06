@@ -1,10 +1,9 @@
 import pytest
-
+from kaomojin.kaomojin import Kaomoji
+from kaomojin.kaomojin import NonKaomoji
 from kaomojin.kaomojin import analyze
 from kaomojin.kaomojin import extract
 from kaomojin.kaomojin import extract_and_replace
-from kaomojin.kaomojin import Kaomoji
-from kaomojin.kaomojin import NonKaomoji
 from kaomojin.kaomojin import replace
 
 

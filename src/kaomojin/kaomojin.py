@@ -1,5 +1,7 @@
 from collections import defaultdict
 from importlib import resources
+from typing import List
+from typing import Tuple
 
 
 def _init_kaomoji_dict():
@@ -169,12 +171,14 @@ class Viterbi:
         return reversed(result)
 
 
-def analyze(text):
+def analyze(text: str) -> List[Node]:
+    """Parse text into a graph representation."""
     dg = DG(text)
     return dg.optimize()
 
 
-def extract(text):
+def extract(text: str) -> List[Node]:
+    """Extract kaomoji nodes from a graph representation of text."""
     kaomojis = []
     for node in analyze(text):
         if isinstance(node, Kaomoji):
@@ -182,27 +186,41 @@ def extract(text):
     return kaomojis
 
 
-def extract_and_replace(text, new):
+def extract_and_replace(text: str, new: str) -> Tuple[List[Node], str]:
+    """Extract kaomoji nodes and replace them in text.
+
+    The ``new`` is a template which replaces each kaomoji. It is rendered with
+    parameters `num` (the n-th kaomoji found), `pos` (position of kaomoji), and `text`
+    (the kaomoji text itself).
+    """
     texts = []
     kaomojis = []
     num = 0
     for node in analyze(text):
         if isinstance(node, Kaomoji):
-            texts.append(new.format(num=num, pos=node.pos, text=node.text))
             kaomojis.append(node)
+            node_text = new.format(num=num, pos=node.pos, text=node.text)
             num += 1
         else:
-            texts.append(node.text)
+            node_text = node.text
+        texts.append(node_text)
     return kaomojis, "".join(texts)
 
 
-def replace(text, new):
+def replace(text: str, new: str) -> str:
+    """Replace kaomoji with text.
+
+    The ``new`` is a template which replaces each kaomoji. It is rendered with
+    parameters `num` (the n-th kaomoji found), `pos` (position of kaomoji), and `text`
+    (the kaomoji text itself).
+    """
     texts = []
     num = 0
     for node in analyze(text):
         if isinstance(node, Kaomoji):
-            texts.append(new.format(num=num, pos=node.pos, text=node.text))
+            node_text = new.format(num=num, pos=node.pos, text=node.text)
             num += 1
         else:
-            texts.append(node.text)
+            node_text = node.text
+        texts.append(node_text)
     return "".join(texts)
